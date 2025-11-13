@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COSMIC COLLECTOR // Neural Space Command</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated Background Layers -->
+    <div class="cosmic-bg">
+        <div class="nebula-layer"></div>
+        <div class="stars-layer"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <div class="game-container">
+        <!-- Futuristic HUD Header -->
+        <div class="hud-header">
+            <div class="hud-panel score-panel">
+                <div class="panel-glow"></div>
+                <div class="panel-content">
+                    <div class="hud-label">
+                        <span class="icon">◈</span>
+                        <span>SCORE</span>
+                    </div>
+                    <div class="hud-value" id="score">0</div>
+                    <div class="combo-display" id="comboDisplay"></div>
+                </div>
+            </div>
+            
+            <div class="hud-panel center-panel">
+                <div class="panel-glow"></div>
+                <div class="panel-content">
+                    <div class="difficulty-badge" id="difficultyDisplay">EASY</div>
+                    <div class="high-score-text">BEST <span id="highScore">0</span></div>
+                </div>
+            </div>
+            
+            <div class="hud-panel lives-panel">
+                <div class="panel-glow"></div>
+                <div class="panel-content">
+                    <div class="hud-label">
+                        <span>INTEGRITY</span>
+                        <span class="icon">◆</span>
+                    </div>
+                    <div class="lives-display" id="lives">
+                        <span class="life-bar"></span>
+                        <span class="life-bar"></span>
+                        <span class="life-bar"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Control Buttons -->
+        <div class="game-controls">
+            <button class="ctrl-btn" id="pauseButton" title="Pause (P)">
+                <span class="btn-glow"></span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="6" y="4" width="4" height="16" rx="1"/>
+                    <rect x="14" y="4" width="4" height="16" rx="1"/>
+                </svg>
+            </button>
+            <button class="ctrl-btn" id="muteButton" title="Mute (M)">
+                <span class="btn-glow"></span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                    <path d="M15.54 8.46a5 5 0 010 7.07"/>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Game Canvas -->
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas"></canvas>
+            <div class="scan-line"></div>
+        </div>
+        
+        <!-- Active Power-ups HUD -->
+        <div class="active-powerups" id="activePowerups"></div>
+        
+        <!-- START SCREEN -->
+        <div class="modal-screen start-screen" id="startScreen">
+            <div class="screen-bg"></div>
+            <div class="screen-content">
+                <div class="logo-container">
+                    <h1 class="game-logo">
+                        <span class="logo-line">COSMIC</span>
+                        <span class="logo-line main">COLLECTOR</span>
+                    </h1>
+                    <div class="logo-subtitle">// NEURAL SPACE COMMAND v2.0</div>
+                </div>
+                
+                <div class="profile-section">
+                    <label class="input-label">PILOT ID</label>
+                    <input type="text" id="playerName" placeholder="Enter callsign" maxlength="15" value="Pilot">
+                </div>
+                
+                <div class="selection-group">
+                    <h3 class="section-title">MISSION DIFFICULTY</h3>
+                    <div class="difficulty-grid">
+                        <button class="diff-card active" data-difficulty="easy">
+                            <div class="card-icon easy">◐</div>
+                            <div class="card-label">RECRUIT</div>
+                            <div class="card-stats">5 Lives • Standard Spawn</div>
+                        </button>
+                        <button class="diff-card" data-difficulty="medium">
+                            <div class="card-icon medium">◑</div>
+                            <div class="card-label">VETERAN</div>
+                            <div class="card-stats">3 Lives • Increased Spawn</div>
+                        </button>
+                        <button class="diff-card" data-difficulty="hard">
+                            <div class="card-icon hard">◕</div>
+                            <div class="card-label">ELITE</div>
+                            <div class="card-stats">2 Lives • Max Difficulty</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="selection-group">
+                    <h3 class="section-title">SHIP CONFIGURATION</h3>
+                    <div class="ship-palette">
+                        <button class="color-chip active" data-color="blue" style="--chip-color: #4fc3f7"></button>
+                        <button class="color-chip" data-color="red" style="--chip-color: #ff6b6b"></button>
+                        <button class="color-chip" data-color="green" style="--chip-color: #51cf66"></button>
+                        <button class="color-chip" data-color="purple" style="--chip-color: #cc5de8"></button>
+                        <button class="color-chip" data-color="gold" style="--chip-color: #ffd700"></button>
+                    </div>
+                </div>
+                
+                <div class="briefing-section">
+                    <h3 class="section-title">MISSION BRIEFING</h3>
+                    <div class="briefing-grid">
+                        <div class="briefing-item">
+                            <span class="item-icon star">✦</span>
+                            <span>Standard Star +10</span>
+                        </div>
+                        <div class="briefing-item">
+                            <span class="item-icon rainbow">✧</span>
+                            <span>Rare Star +50</span>
+                        </div>
+                        <div class="briefing-item">
+                            <span class="item-icon freeze">◬</span>
+                            <span>Time Freeze</span>
+                        </div>
+                        <div class="briefing-item">
+                            <span class="item-icon hazard">◆</span>
+                            <span>Asteroid Hazard</span>
+                        </div>
+                        <div class="briefing-item">
+                            <span class="item-icon shield">⬡</span>
+                            <span>Shield (5s)</span>
+                        </div>
+                        <div class="briefing-item">
+                            <span class="item-icon magnet">⬢</span>
+                            <span>Magnet Field</span>
+                        </div>
+                    </div>
+                    <div class="controls-hint">
+                        <span>⌨ WASD / Arrow Keys</span>
+                        <span>⏸ P to Pause</span>
+                        <span>🔇 M to Mute</span>
+                    </div>
+                </div>
+                
+                <button class="primary-btn" id="startButton">
+                    <span class="btn-bg"></span>
+                    <span class="btn-text">INITIATE MISSION</span>
+                </button>
+                
+                <button class="secondary-btn" id="showLeaderboard">
+                    <span class="btn-text">▸ VIEW LEADERBOARD</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- PAUSE SCREEN -->
+        <div class="modal-screen pause-screen hidden" id="pauseScreen">
+            <div class="screen-bg"></div>
+            <div class="screen-content">
+                <h1 class="modal-title">MISSION PAUSED</h1>
+                <p class="modal-subtitle">System on standby</p>
+                <button class="primary-btn" id="resumeButton">
+                    <span class="btn-bg"></span>
+                    <span class="btn-text">RESUME</span>
+                </button>
+                <button class="secondary-btn danger" id="quitButton">
+                    <span class="btn-text">ABORT MISSION</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- GAME OVER SCREEN -->
+        <div class="modal-screen gameover-screen hidden" id="gameOverScreen">
+            <div class="screen-bg"></div>
+            <div class="screen-content">
+                <h1 class="modal-title">MISSION COMPLETE</h1>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">FINAL SCORE</div>
+                        <div class="stat-value" id="finalScore">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">MAX COMBO</div>
+                        <div class="stat-value" id="finalCombo">0</div>
+                    </div>
+                </div>
+                <div id="newHighScore" class="achievement-banner hidden">
+                    <span class="banner-glow"></span>
+                    ⚡ NEW HIGH SCORE ⚡
+                </div>
+                <div id="achievements" class="achievements-list"></div>
+                <button class="primary-btn" id="restartButton">
+                    <span class="btn-bg"></span>
+                    <span class="btn-text">REPLAY MISSION</span>
+                </button>
+                <button class="secondary-btn" id="menuButton">
+                    <span class="btn-text">RETURN TO BASE</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- LEADERBOARD SCREEN -->
+        <div class="modal-screen leaderboard-screen hidden" id="leaderboardScreen">
+            <div class="screen-bg"></div>
+            <div class="screen-content">
+                <h1 class="modal-title">TOP COMMANDERS</h1>
+                <div class="leaderboard-container" id="leaderboardList"></div>
+                <button class="primary-btn" id="backToMenu">
+                    <span class="btn-bg"></span>
+                    <span class="btn-text">RETURN</span>
+                </button>
+                <button class="secondary-btn danger" id="clearLeaderboard">
+                    <span class="btn-text">CLEAR RECORDS</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Achievement Toast -->
+        <div class="achievement-toast hidden" id="achievementPopup">
+            <div class="toast-glow"></div>
+            <div class="toast-icon">⚡</div>
+            <div class="toast-text" id="achievementText"></div>
+        </div>
+        
+        <!-- Mobile Controls -->
+        <div class="mobile-controls hidden" id="mobileControls">
+            <div class="virtual-joystick">
+                <div class="joystick-base">
+                    <div class="joystick-thumb"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
